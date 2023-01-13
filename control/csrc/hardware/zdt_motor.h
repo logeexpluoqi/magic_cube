@@ -12,9 +12,25 @@
  extern "C" {
 #endif
 
+#include <stdint.h>
+
 typedef struct
 {
-    
+    float p;
+    float v;
+    int32_t enc_pos;
+    int32_t pulse_ref;
+    uint16_t enc;
+    int acc;
+    int dir;
+
+    uint8_t div;
+    uint8_t block_flag;
+    uint8_t zero_flag;
+    uint8_t ena;
+    int err;
+    int (*send)(char *wdata, int len);
+    int (*recv)(char *rdata, int len);
 } ZdtMotorObj;
 
 

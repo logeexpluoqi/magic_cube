@@ -1,7 +1,9 @@
-import qserial
+import zdt_motor
 
-ser = qserial.QSerial("COM5", 115200, 8, "N", 1, 0.5)
+motor = zdt_motor.ZdtMotor("COM16", 1, 10)
 
-ser.send("asdfasdf")
+motor._send(bytes([0,1,2,4,5]))
 
-print(ser.recv(5))
+print(motor._recv(10))
+
+motor.close()

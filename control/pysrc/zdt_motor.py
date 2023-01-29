@@ -4,24 +4,26 @@ class ZdtMotor(serial.Serial):
     
     def __init__(self, port, id, timeout):
         self.id = id
-        super().__init__(port, 115200, 8, "N", 1, timeout)
-        if self.is_open:
-            self._close()
+        try:
+            super().__init__(port, 115200, 8, "N", 1, timeout)
+            if self.is_open:
+                self._close()
+            
+            self.open()
             self.is_open = False
-        self.open()
-        
-        self.ischeck = False
-        self.pos = 0
-        self.pul = 0
-        self.ena = 0
-        self.enc = 0
-        self.perr = 0
-        self.lock = 0
-        self.zero_state = 0
-        self.err = 0
-        
-        print(" Connect to %s, %d, %d, %s, %d, %d", port, self.baudrate,
-              self.bytesize, self.parity, self.stopbits, self.timeout)
+            self.ischeck = False
+            self.pos = 0
+            self.pul = 0
+            self.ena = 0
+            self.enc = 0
+            self.perr = 0
+            self.lock = 0
+            self.zero_state = 0
+            self.err = 0
+            print(" Connect to %s, %d, %d, %s, %d, %d", port, self.baudrate,
+                self.bytesize, self.parity, self.stopbits, self.timeout)
+        except:
+            print(" serial open error !")
 
     def _send(self, data):
         self.write(data)

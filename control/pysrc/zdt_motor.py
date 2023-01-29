@@ -8,9 +8,12 @@ class ZdtMotor(serial.Serial):
             super().__init__(port, 115200, 8, "N", 1, timeout)
             if self.is_open:
                 self._close()
-            
+                self.is_open = False
             self.open()
-            self.is_open = False
+            self.err = 0
+            print(" Connect to %s, %d, %d, %s, %d, %d", port, self.baudrate,
+                self.bytesize, self.parity, self.stopbits, self.timeout)
+            
             self.ischeck = False
             self.pos = 0
             self.pul = 0
@@ -19,9 +22,6 @@ class ZdtMotor(serial.Serial):
             self.perr = 0
             self.lock = 0
             self.zero_state = 0
-            self.err = 0
-            print(" Connect to %s, %d, %d, %s, %d, %d", port, self.baudrate,
-                self.bytesize, self.parity, self.stopbits, self.timeout)
         except:
             print(" serial open error !")
 

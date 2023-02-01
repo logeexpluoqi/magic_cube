@@ -47,7 +47,7 @@ class Cube:
         self.filled_2[-1, :, -1] = 0
         
         self.color_map = np.array(['#ffd400', "#fffffb", "#f47920", "#d71345", "#145b7d", "#45b97c"])
-        self.facecolors = np.full(self.filled_2.shape, '#77787b')  # 设一个灰色的基调
+        self.facecolors = np.full(self.filled_2.shape, '#77787b')
         
         self.facecolors[:, :, -1] = self.color_map[0]  # up:    yellow
         self.facecolors[:, :, 0]  = self.color_map[1]  # down:  white

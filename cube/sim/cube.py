@@ -168,12 +168,12 @@ class Cube:
                 else:
                     return
                 
-        self.facecolors[:, :, -1] = self.colors_up    # y
-        self.facecolors[:, :, 0]  = self.colors_down  # w
-        self.facecolors[:, 0, :]  = self.colors_right # o
-        self.facecolors[:, -1, :] = self.colors_left  # r
-        self.facecolors[0, :, :]  = self.colors_front # b
-        self.facecolors[-1, :, :] = self.colors_back  # g
+        self.facecolors[:, :, -1] = self.colors_up 
+        self.facecolors[:, :, 0]  = self.colors_down
+        self.facecolors[:, 0, :]  = self.colors_right
+        self.facecolors[:, -1, :] = self.colors_left
+        self.facecolors[0, :, :]  = self.colors_front
+        self.facecolors[-1, :, :] = self.colors_back
         
     def _show(self):
         self.ax.voxels(self.x, self.y, self.z, self.body, facecolors = self.facecolors)

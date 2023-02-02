@@ -181,15 +181,22 @@ class Cube:
         self.ax.voxels(self.x, self.y, self.z, self.body, facecolors = self.facecolors)
         plt.show()
         
-    def turn(self, ref: str, layer: int, step: int):
+    def rotate(self, ref: str, layer: int, step: int):
         """
         - ref:   ["left", "up", "front"], reference face
         - layer: [1, n], n is a interger number, cube layer
-        - step:  [-n, +n], n is a integer number, turn (n * 90) degrees
+        - step:  [-n, +n], n is a integer number, rotate (n * 90) degrees
         """
-        
+        if ref == "left":
+            _ = 0
+        elif ref == "up":
+            _ = 0
+        elif ref == "front":
+            _ = 0
+        else:
+            return
         self._show()
         
 if __name__ == '__main__':
     cube = Cube(3)
-    cube.turn("left", 1, 2)
+    cube.rotate("left", 1, -2)

@@ -66,10 +66,11 @@ class Cube:
         self.colors_front = np.full((self.order * 2 + 3, self.order * 2 + 3), self.color["bc"])
         self.colors_back  = np.full((self.order * 2 + 3, self.order * 2 + 3), self.color["bc"])
         
-        self._fill_color()
-        
         # creat a canvas
         self.ax = plt.figure().add_subplot(projection = '3d')
+        plt.ioff()
+        plt.axis("off")
+        self._show()
     
     def _fill_color(self):
         x = 0
@@ -176,11 +177,19 @@ class Cube:
         self.facecolors[-1, :, :] = self.colors_back
         
     def _show(self):
+        self._fill_color()
         self.ax.voxels(self.x, self.y, self.z, self.body, facecolors = self.facecolors)
-        plt.ioff()
-        plt.axis("off")
         plt.show()
+        
+    def turn(self, ref: str, layer: int, step: int):
+        """
+        - ref:   ["left", "up", "front"], reference face
+        - layer: [1, n], n is a interger number, cube layer
+        - step:  [-n, +n], n is a integer number, turn (n * 90) degrees
+        """
+        
+        self._show()
         
 if __name__ == '__main__':
     cube = Cube(3)
-    cube._show()
+    cube.turn("left", 1, 2)

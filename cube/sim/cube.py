@@ -70,9 +70,9 @@ class Cube:
         self.ax = plt.figure().add_subplot(projection = '3d')
         plt.ion()
         plt.axis("off")
-        self._show()
+        self.__show()
     
-    def _fill_color(self):
+    def __fill_color(self):
         x = 0
         y = 0
         for i in range(self.order * 2 + 3 - 1):
@@ -176,32 +176,30 @@ class Cube:
         self.facecolors[0, :, :]  = self.colors_front
         self.facecolors[-1, :, :] = self.colors_back
         
-    def _show(self):
-        self._fill_color()
+    def __show(self):
+        self.__fill_color()
         self.ax.voxels(self.x, self.y, self.z, self.body, facecolors = self.facecolors)
-        plt.show()
+        self.ax.plot(1, 1)
         
     def rotate(self, ref: str, layer: int, step: int):
         """
-        - ref:   ["left", "up", "front"], reference face
+        - ref:   ["F", "U", "R"], reference face
         - layer: [1, n], n is a interger number, cube layer
-        - step:  [-n, +n], n is a integer number, rotate (n * 90) degrees, -n: counterclockwise, n: clockwise
-        """
-        
-        """
-        This angle of view is define contrary to axis, because of the view angele of 3D plot
-        - front: orange
-        - right: green
-        - left:  blue
-        - up:    yellow
-        - down:  white
+        - step:  [-n, +n], n is a integer number, rotate (n * 90) degrees, -n: clockwise, n: counterclockwise
+        ---
+        - Front: orange
+        - Back:  red
+        - Right: green
+        - Left:  blue
+        - Up:    yellow
+        - Down:  white
         """
         layer_face = np.zeros((4, self.order), dtype = int)
         n = abs(step) % 4
         if step < 0:
             n = -n
         
-        if ref == "front":
+        if ref == "F":
             layer_face[0, :] = self.face_up[:, layer - 1]
             layer_face[1, :] = self.face_back[layer - 1, :]
             layer_face[2, :] = self.face_down[:, layer - 1]
@@ -212,7 +210,7 @@ class Cube:
             self.face_down[:, layer - 1]  = layer_face[(n + 2) % 4, :]
             self.face_front[layer - 1, :] = layer_face[(n + 3) % 4, :]
             
-        elif ref == "up":
+        elif ref == "U":
             layer_face[0, :] = self.face_left[:, layer % self.order]
             layer_face[1, :] = self.face_front[:, layer % self.order]
             layer_face[2, :] = self.face_right[:, layer % self.order]
@@ -223,7 +221,7 @@ class Cube:
             self.face_right[:, layer % self.order] = layer_face[n, :]
             self.face_back[:, layer % self.order]  = layer_face[(n + 1) % 4, :]
             
-        elif ref == "right": 
+        elif ref == "R": 
             layer_face[0, :] = self.face_up[layer % self.order, :]
             layer_face[1, :] = self.face_left[:, layer % self.order]
             layer_face[2, :] = self.face_down[layer % self.order, :]
@@ -237,11 +235,13 @@ class Cube:
         else:
             return
         
-        plt.ioff()
-        self._show()
+        # plt.ioff()
+        self.__show()
         
 if __name__ == '__main__':
     import time
     cube = Cube(4)
-    time.sleep(0)
-    cube.rotate("up", 2, 1)
+    time.sleep(0.5)
+    cube.rotate("R", 2, 1)
+    time.sleep(0.5)
+    cube.rotate("U", 4, 2)

@@ -17,8 +17,8 @@ class Cube:
             for j in range(self.order):
                 self.face_up[i, j]    = self.face_color["y"]
                 self.face_down[i, j]  = self.face_color["w"]
-                self.face_left[i, j]  = self.face_color["r"]
-                self.face_right[i, j] = self.face_color["o"]
+                self.face_right[i, j] = self.face_color["r"]
+                self.face_left[i, j]  = self.face_color["o"]
                 self.face_front[i, j] = self.face_color["b"]
                 self.face_back[i, j]  = self.face_color["g"]
                 
@@ -66,13 +66,26 @@ class Cube:
         self.colors_front = np.full((self.order * 2 + 3, self.order * 2 + 3), self.color["bc"])
         self.colors_back  = np.full((self.order * 2 + 3, self.order * 2 + 3), self.color["bc"])
         
+        # self.face_down[0,0] = self.face_color["g"]
+
+        # self.rotate("U", 4, -1)
+        # self.rotate("U", self. order, -1)
+        
+        self.rotate("F", 1, -1)
+        self.rotate("R", 2, 1)
+        self.rotate("U", 3, -1)
+        
+        self.rotate("U", 3, 1)
+        # self.rotate("R", 2, -1)
+        # self.rotate("F", 1, 1)
+
         # creat a canvas
         self.ax = plt.figure().add_subplot(projection = '3d')
-        plt.ion()
+        plt.ioff()
         plt.axis("off")
         self.__show()
     
-    def __fill_color(self):
+    def __fill_color(self): 
         x = 0
         y = 0
         for i in range(self.order * 2 + 3 - 1):
@@ -179,7 +192,7 @@ class Cube:
     def __show(self):
         self.__fill_color()
         self.ax.voxels(self.x, self.y, self.z, self.body, facecolors = self.facecolors)
-        self.ax.plot(1, 1)
+        plt.show()
         
     def rotate(self, ref: str, layer: int, step: int):
         """
@@ -194,6 +207,11 @@ class Cube:
         - Up:    yellow
         - Down:  white
         """
+        if layer > self.order:
+            layer = self.order
+        elif layer < 1:
+            layer = 1
+        
         layer_face = np.zeros((4, self.order), dtype = int)
         n = abs(step) % 4
         if step < 0:
@@ -210,38 +228,46 @@ class Cube:
             self.face_down[:, layer - 1]  = layer_face[(n + 2) % 4, :]
             self.face_front[layer - 1, :] = layer_face[(n + 3) % 4, :]
             
+            if layer == 1:
+                self.face_right = np.rot90(self.face_right, n)
+            elif layer == self.order:
+                self.face_left = np.rot90(self.face_left, n)
         elif ref == "U":
-            layer_face[0, :] = self.face_left[:, layer % self.order]
-            layer_face[1, :] = self.face_front[:, layer % self.order]
-            layer_face[2, :] = self.face_right[:, layer % self.order]
-            layer_face[3, :] = self.face_back[:, layer % self.order]
+            layer_face[0, :] = self.face_left[:, self.order - layer]
+            layer_face[1, :] = self.face_front[:, self.order - layer]
+            layer_face[2, :] = self.face_right[:, self.order - layer]
+            layer_face[3, :] = self.face_back[:, self.order - layer]
             
-            self.face_left[:, layer % self.order]  = layer_face[(n + 2) % 4, :]
-            self.face_front[:, layer % self.order] = layer_face[(n + 3) % 4, :]
-            self.face_right[:, layer % self.order] = layer_face[n, :]
-            self.face_back[:, layer % self.order]  = layer_face[(n + 1) % 4, :]
+            self.face_left[:, self.order - layer]  = layer_face[(n + 2) % 4, :]
+            self.face_front[:, self.order - layer] = layer_face[(n + 3) % 4, :]
+            self.face_right[:, self.order - layer] = layer_face[n, :]
+            self.face_back[:, self.order - layer]  = layer_face[(n + 1) % 4, :]
             
+            if layer == 1:
+                self.face_up = np.rot90(self.face_up, n)
+            elif layer == self.order:
+                self.face_down = np.rot90(self.face_down, n)
         elif ref == "R": 
-            layer_face[0, :] = self.face_up[layer % self.order, :]
-            layer_face[1, :] = self.face_left[:, layer % self.order]
-            layer_face[2, :] = self.face_down[layer % self.order, :]
-            layer_face[3, :] = self.face_right[:, layer % self.order]
+            layer_face[0, :] = self.face_up[self.order - layer, :]
+            layer_face[1, :] = self.face_left[:, self.order - layer]
+            layer_face[2, :] = self.face_down[self.order - layer, :]
+            layer_face[3, :] = self.face_right[:, self.order - layer]
             
-            self.face_up[layer % self.order, :]    = layer_face[n, :]
-            self.face_left[layer % self.order, :]  = layer_face[(n + 1) % 4, :]
-            self.face_down[layer % self.order, :]  = layer_face[(n + 2) % 4, :]
-            self.face_right[layer % self.order, :] = layer_face[(n + 3) % 4, :]
+            self.face_up[self.order - layer, :]    = layer_face[n, :]
+            self.face_left[self.order - layer, :]  = layer_face[(n + 1) % 4, :]
+            self.face_down[self.order - layer, :]  = layer_face[(n + 2) % 4, :]
+            self.face_right[self.order - layer, :] = layer_face[(n + 3) % 4, :]
             
+            if layer == 1:
+                self.face_back = np.rot90(self.face_back, n)
+            elif layer == self.order:
+                self.face_front = np.rot90(self.face_front, n)
         else:
             return
         
-        # plt.ioff()
-        self.__show()
-        
+        # self.__show()
+    
 if __name__ == '__main__':
     import time
-    cube = Cube(4)
-    time.sleep(0.5)
-    cube.rotate("R", 2, 1)
-    time.sleep(0.5)
-    cube.rotate("U", 4, 2)
+    cube = Cube(3)
+    

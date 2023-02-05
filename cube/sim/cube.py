@@ -214,8 +214,8 @@ class Cube:
         - layer: [1, n], n is a interger number, cube layer
         - step:  [-n, +n], n is a integer number, rotate (n * 90) degrees, -n: clockwise, n: counterclockwise
         ---
-        - Front: orange
-        - Back:  red
+        - Front: red
+        - Back:  orange
         - Right: green
         - Left:  blue
         - Up:    yellow
@@ -287,6 +287,5 @@ class Cube:
         # self.__show()
     
 if __name__ == '__main__':
-    import time
     cube = Cube(3)
     

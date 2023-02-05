@@ -68,30 +68,44 @@ class Cube:
         
         # self.face_down[0,0] = self.face_color["g"]
 
-        # self.rotate("U", 4, -1)
-        # self.rotate("U", self. order, -1)
-        
-        self.rotate("F", 1, -1)
-        self.rotate("R", 2, 1)
-        self.rotate("U", 3, -1)
-        
-        self.rotate("U", 3, 1)
-        # self.rotate("R", 2, -1)
-        # self.rotate("F", 1, 1)
+        self.rotate("F", 1, 1)
+        # self.rotate("U", 1, -1)
+        # self.rotate("R", 1, -1)
 
         # creat a canvas
         self.ax = plt.figure().add_subplot(projection = '3d')
         plt.ioff()
         plt.axis("off")
-        self.__show()
+        self.__show() 
     
+    def __mat_circ_shift(self, mat, rshift, cshift):
+        """
+        - mat: input matrix
+        - rshift: row shift step, if rshift > 0, down shift, else up shift
+        - cshift: col shift step, if cshift > 0, right shift, else left shift
+        """
+        h, w = mat.shape
+        if rshift > 0:
+            mat = np.vstack((mat[(h - rshift):, :], mat[:(h - rshift), :]))
+        else:
+            rshift = -rshift
+            mat = np.vstack((mat[rshift:, :], mat[:rshift, :]))
+        
+        if cshift > 0:
+            mat = np.hstack((mat[:, (w - cshift):],mat[:, :(w - cshift)]))
+        else:
+            cshift = -cshift
+            mat = np.hstack((mat[:, cshift:],mat[:, :cshift]))
+        
+        return mat
+        
     def __fill_color(self): 
         x = 0
         y = 0
         for i in range(self.order * 2 + 3 - 1):
-            x = i // 2 - 1
+            x = (i // 2) - 1
             for j in range(self.order * 2 + 3 - 1):
-                y = j // 2 - 1
+                y = (j // 2) - 1
                 if self.face_up[x, y] == self.face_color["y"]:
                     self.colors_up[i, j] = self.color["y"]
                 elif self.face_up[x, y] == self.face_color["w"]:
@@ -216,17 +230,19 @@ class Cube:
         n = abs(step) % 4
         if step < 0:
             n = -n
-        
+        # np.flipud() ,旋转会数组倒序
         if ref == "F":
             layer_face[0, :] = self.face_up[:, layer - 1]
             layer_face[1, :] = self.face_back[layer - 1, :]
             layer_face[2, :] = self.face_down[:, layer - 1]
             layer_face[3, :] = self.face_front[layer - 1, :]
             
-            self.face_up[:, layer - 1]    = layer_face[n, :]
-            self.face_back[layer - 1, :]  = layer_face[(n + 1) % 4, :]
-            self.face_down[:, layer - 1]  = layer_face[(n + 2) % 4, :]
-            self.face_front[layer - 1, :] = layer_face[(n + 3) % 4, :]
+            layer_face = self.__mat_circ_shift(layer_face, -n, 0);
+            
+            self.face_up[:, layer - 1]    = np.flip(layer_face[0, :])
+            self.face_back[layer - 1, :]  = np.flip(layer_face[1, :])
+            self.face_down[:, layer - 1]  = np.flip(layer_face[2, :])
+            self.face_front[layer - 1, :] = np.flip(layer_face[3, :])
             
             if layer == 1:
                 self.face_right = np.rot90(self.face_right, n)
@@ -238,10 +254,12 @@ class Cube:
             layer_face[2, :] = self.face_right[:, self.order - layer]
             layer_face[3, :] = self.face_back[:, self.order - layer]
             
-            self.face_left[:, self.order - layer]  = layer_face[(n + 2) % 4, :]
-            self.face_front[:, self.order - layer] = layer_face[(n + 3) % 4, :]
-            self.face_right[:, self.order - layer] = layer_face[n, :]
-            self.face_back[:, self.order - layer]  = layer_face[(n + 1) % 4, :]
+            layer_face = self.__mat_circ_shift(layer_face, n, 0)
+            
+            self.face_left[:, self.order - layer]  = np.flip(layer_face[0, :])
+            self.face_front[:, self.order - layer] = np.flip(layer_face[1, :])
+            self.face_right[:, self.order - layer] = np.flip(layer_face[2, :])
+            self.face_back[:, self.order - layer]  = np.flip(layer_face[3, :])
             
             if layer == 1:
                 self.face_up = np.rot90(self.face_up, n)
@@ -253,10 +271,11 @@ class Cube:
             layer_face[2, :] = self.face_down[self.order - layer, :]
             layer_face[3, :] = self.face_right[:, self.order - layer]
             
-            self.face_up[self.order - layer, :]    = layer_face[n, :]
-            self.face_left[self.order - layer, :]  = layer_face[(n + 1) % 4, :]
-            self.face_down[self.order - layer, :]  = layer_face[(n + 2) % 4, :]
-            self.face_right[self.order - layer, :] = layer_face[(n + 3) % 4, :]
+            layer_face = self.__mat_circ_shift(layer_face, -n, 0)
+            self.face_up[self.order - layer, :]    = np.flip(layer_face[0, :])
+            self.face_left[self.order - layer, :]  = np.flip(layer_face[1, :])
+            self.face_down[self.order - layer, :]  = np.flip(layer_face[2, :])
+            self.face_right[self.order - layer, :] = np.flip(layer_face[3, :])
             
             if layer == 1:
                 self.face_back = np.rot90(self.face_back, n)
